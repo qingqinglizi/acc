@@ -1,13 +1,14 @@
 package com.sso.acc.ticket.ProxyTicket;
 
+import com.sso.acc.exception.AccRunTimeException;
 import com.sso.acc.ticket.TicketProperties;
-import com.sso.acc.exception.ServiceException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author Lee
@@ -35,24 +36,20 @@ public class ProxyTicket {
      *
      * @return first ticket
      */
-    public String createFirstTicket() {
-        try {
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            String hostIp = inetAddress.getHostAddress();
-            long dateString = System.currentTimeMillis();
-            String openText = hostIp.replace(".", "") + dateString;
-            String salt = RandomStringUtils.randomAlphanumeric(5);
-            return "FT-" + encryptMessage(openText, salt);
-        } catch (Exception e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
+    public String createFirstTicket() throws AccRunTimeException, UnknownHostException {
+        InetAddress inetAddress = InetAddress.getLocalHost();
+        String hostIp = inetAddress.getHostAddress();
+        long dateString = System.currentTimeMillis();
+        String openText = hostIp.replace(".", "") + dateString;
+        String salt = RandomStringUtils.randomAlphanumeric(5);
+        return "FT-" + encryptMessage(openText, salt);
     }
 
     /**
      * encrypt important message
      *
      * @param openText openText
-     * @param salt salt
+     * @param salt     salt
      * @return encrypt result
      */
     private String encryptMessage(String openText, String salt) {

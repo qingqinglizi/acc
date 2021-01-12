@@ -1,14 +1,16 @@
 package com.sso.acc.ticket.issueTicket;
 
-import com.sso.acc.exception.ServiceException;
+import com.sso.acc.exception.AccRunTimeException;
 import com.sso.acc.ticket.TicketProperties;
 import com.sso.acc.ticket.manageTicket.ManageTicket;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
@@ -39,17 +41,14 @@ public class IssueTicket {
      * @param firstTicket firstTicket
      * @return String
      */
-    public String createSecondTicket(String firstTicket) {
-        try {
-            //check firstTicket validity
-            return validateFirstTicket(firstTicket) ? generateSecondaryTicket(firstTicket) : null;
-        } catch (Exception e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
+    public String createSecondTicket(String firstTicket) throws AccRunTimeException, UnknownHostException {
+        //check firstTicket validity
+        return validateFirstTicket(firstTicket) ? generateSecondaryTicket(firstTicket) : null;
     }
 
     /**
      * Check the validity of the bill
+     *
      * @param firstTicket firstTicket
      * @return validate result
      */
@@ -76,20 +75,16 @@ public class IssueTicket {
      * @param firstTicket firstTicket
      * @return String
      */
-    private String generateSecondaryTicket(String firstTicket) {
-        try {
-            String usableElement = firstTicket.substring(3);
-            char[] randomChar = getRandomCharacter(usableElement);
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            String hostIp = inetAddress.getHostAddress();
-            long dateString = System.currentTimeMillis();
-            String openText = hostIp.replace(".", "") + dateString + new String(randomChar);
-            String salt = RandomStringUtils.randomAlphanumeric(5);
-            SimpleHash encryptText = new SimpleHash(issueTicket.ticketProperties.getAlgorithmMethod(), openText, salt, issueTicket.ticketProperties.getIteration());
-            return "ST-" + encryptText.toString();
-        } catch (Exception e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
+    private String generateSecondaryTicket(String firstTicket) throws AccRunTimeException, UnknownHostException {
+        String usableElement = firstTicket.substring(3);
+        char[] randomChar = getRandomCharacter(usableElement);
+        InetAddress inetAddress = InetAddress.getLocalHost();
+        String hostIp = inetAddress.getHostAddress();
+        long dateString = System.currentTimeMillis();
+        String openText = hostIp.replace(".", "") + dateString + new String(randomChar);
+        String salt = RandomStringUtils.randomAlphanumeric(5);
+        SimpleHash encryptText = new SimpleHash(issueTicket.ticketProperties.getAlgorithmMethod(), openText, salt, issueTicket.ticketProperties.getIteration());
+        return "ST-" + encryptText.toString();
     }
 
     private char[] getRandomCharacter(String string) {

@@ -1,5 +1,6 @@
 package com.sso.acc.controller;
 
+import com.sso.acc.exception.AccRunTimeException;
 import com.sso.acc.ticket.ProxyTicket.ProxyTicket;
 import com.sso.acc.ticket.issueTicket.IssueTicket;
 import com.sso.acc.ticket.manageTicket.ManageTicket;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  * @author Lee
@@ -27,7 +29,7 @@ public class CreateTicketController {
     }
 
     @RequestMapping("/getFirstTicket")
-    public String getFirstTicket(String loginId, HttpServletResponse response) {
+    public String getFirstTicket(String loginId, HttpServletResponse response) throws AccRunTimeException, UnknownHostException {
         ProxyTicket proxyTicket = new ProxyTicket();
         String firstTicket = proxyTicket.createFirstTicket();
         ManageTicket.sessionInfo.put("loginDate", System.currentTimeMillis());

@@ -1,6 +1,7 @@
 package com.sso.acc.controller;
 
 import com.sso.acc.entity.User;
+import com.sso.acc.exception.AccRunTimeException;
 import com.sso.acc.ticket.ProxyTicket.ProxyTicket;
 import com.sso.acc.ticket.manageTicket.ManageTicket;
 import com.sso.acc.ticket.validateTicket.ValidateSecondTicket;
@@ -14,6 +15,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,9 +43,9 @@ public class CertificationCenterController {
     /**
      * check login info
      *
-     * @param user user
-     * @param service service
-     * @param request request
+     * @param user     user
+     * @param service  service
+     * @param request  request
      * @param response response
      * @return check login result
      */
@@ -77,7 +79,7 @@ public class CertificationCenterController {
         return "loginView";
     }
 
-    private void writeFirstTicketToCookie(String loginId, HttpServletRequest request, HttpServletResponse response) {
+    private void writeFirstTicketToCookie(String loginId, HttpServletRequest request, HttpServletResponse response) throws AccRunTimeException, UnknownHostException {
         ProxyTicket proxyTicket = new ProxyTicket();
         String firstTicket = proxyTicket.createFirstTicket();
         ManageTicket.sessionInfo.put("loginDate", System.currentTimeMillis());
