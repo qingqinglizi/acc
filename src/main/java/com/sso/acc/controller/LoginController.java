@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/1 17:18
- * @Description:
+ * @author Lee
+ * Date: 2020/6/1 17:18
+ * Description: request for login
  */
 @Controller
 public class LoginController {
@@ -79,16 +79,14 @@ public class LoginController {
     /**
      * remove cookie
      *
-     * @param cookieName
-     * @param cookiePath
-     * @param response
+     * @param cookieName cookieName
+     * @param cookiePath cookiePath
+     * @param response response
      */
-    public void removeCookie(String cookieName, String cookiePath, HttpServletResponse response) {
+    private void removeCookie(String cookieName, String cookiePath, HttpServletResponse response) {
         Cookie cookie = new Cookie(cookieName, null);
         cookie.setPath(cookiePath);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
-
-
 }

@@ -20,9 +20,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/1 17:37
- * @Description:
+ * @author Lee
+ * Date: 2020/6/1 17:37
+ * Description: check ticket
  */
 @Controller
 @RequestMapping("/certification")
@@ -34,6 +34,19 @@ public class CertificationCenterController {
     @Value("${server.servlet.context-path}")
     private String rootPath;
 
+    private final String cookieNameST = "ST";
+
+    private final String cookiePath = "/";
+
+    /**
+     * check login info
+     *
+     * @param user user
+     * @param service service
+     * @param request request
+     * @param response response
+     * @return check login result
+     */
     @RequestMapping(value = "/checkLoginResult", method = RequestMethod.POST)
     public String certificationLoginInfo(User user, String service, HttpServletRequest request, HttpServletResponse response) {
         if (user == null) {
@@ -55,18 +68,16 @@ public class CertificationCenterController {
                 writeFirstTicketToCookie(user.getLoginId(), request, response);
                 response.sendRedirect("/acc/createTicket/getSecondTicket?service=" + service + "&loginId=" + user.getLoginId());
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
             ExecuteSqlUtil.closeStatement(preparedStatement);
             ExecuteSqlUtil.closeConnection(connection);
-            return "loginView";
         }
+        return "loginView";
     }
 
-    public void writeFirstTicketToCookie(String loginId, HttpServletRequest request, HttpServletResponse response) {
+    private void writeFirstTicketToCookie(String loginId, HttpServletRequest request, HttpServletResponse response) {
         ProxyTicket proxyTicket = new ProxyTicket();
         String firstTicket = proxyTicket.createFirstTicket();
         ManageTicket.sessionInfo.put("loginDate", System.currentTimeMillis());
@@ -78,61 +89,26 @@ public class CertificationCenterController {
         response.addCookie(cookie);
     }
 
-//    @RequestMapping(value = "/checkFirstTicket", method = RequestMethod.POST)
-//    public void checkFirstTicket(String service, HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        Cookie[] cookies = request.getCookies();
-//        for (Cookie cookie : cookies) {
-//            if ("FT".equals(cookie.getName())) {
-//                if (validateFirstTicket(cookie)) {
-//
-//                }
-//                response.sendRedirect("/login?service=" + service);
-//            }
-//        }
-//        response.sendRedirect("/login?service=" + service);
-//    }
-
-//    public boolean validateFirstTicket(Cookie cookie) {
-//        if (!ManageTicket.firstTicketMap.containsKey(cookie.getValue())) {
-//            return false;
-//        }
-//        Map sessionInfo = (Map) ManageTicket.firstTicketMap.get(cookie.getValue());
-//        long loginDate = (long) sessionInfo.get("loginDate");
-//        if (System.currentTimeMillis() - loginDate > ftExpiredTime * 1000) {
-//            return false;
-//        }
-//        return true;
-//    }
-
     @ResponseBody
     //方法中少了 @ResponseBody 注释，所以无法将 Boolean 类型的数据传到前台，
     // 会报错：IllegalArgumentException: Unknown return value type: java.lang.Boolean
     @RequestMapping(value = "/checkSecondTicket", method = RequestMethod.GET)
     public boolean checkSecondTicket(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        Cookie[] cookies = request.getCookies();
-//        for (Cookie cookie : cookies) {
-//            if ("ST".equals(cookie.getName())) {
-//                if (ValidateSecondTicket.getInstance().validateSecondTicket(cookie.getValue())) {
-//                    return true;
-//                }
-//            }
-//        }
         String cookieValue = request.getHeader("Cookie");
         if (ValidateSecondTicket.getInstance().validateSecondTicket(cookieValue)) {
             return true;
         }
-        removeCookie("ST", "/", response);
+        removeCookie(response);
         return false;
     }
 
     /**
      * remove cookie
-     * @param cookieName
-     * @param cookiePath
-     * @param response
+     *
+     * @param response response
      */
-    public void removeCookie(String cookieName, String cookiePath, HttpServletResponse response) {
-        Cookie cookie = new Cookie(cookieName, null);
+    private void removeCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie(cookieNameST, null);
         cookie.setPath(cookiePath);
         cookie.setMaxAge(0);
         response.addCookie(cookie);

@@ -6,9 +6,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/5 10:33
- * @Description:
+ * @author Lee
+ * Date: 2020/6/5 10:33
+ * Description: ticket properties
  */
 @Component
 // 自定义位置&文件名

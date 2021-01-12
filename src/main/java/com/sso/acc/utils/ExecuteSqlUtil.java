@@ -7,9 +7,9 @@ import java.sql.*;
 import java.util.Properties;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/1 17:40
- * @Description:
+ * @author Lee
+ * Date: 2020/6/1 17:40
+ * Description: sql util
  */
 public class ExecuteSqlUtil {
 
@@ -20,24 +20,6 @@ public class ExecuteSqlUtil {
     private static String userName;
 
     private static String password;
-
-//    static {
-//        try {
-//            Properties properties = new Properties();
-//            InputStream inputStream = Object.class.getResourceAsStream("/application-sql.properties");
-//            properties.load(inputStream);
-//            driver = properties.getProperty("datasource.driver-class-name");
-//            url = properties.getProperty("datasource.url");
-//            userName = properties.getProperty("datasource.username");
-//            password = properties.getProperty("datasource.password");
-//            Class.forName(driver);  //加载驱动
-//        } catch (ClassNotFoundException e) {
-//            System.out.println("找不到驱动程序类，加载驱动失败。");
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     static{
         Resource resource = new ClassPathResource("application-sql.properties");
@@ -107,13 +89,12 @@ public class ExecuteSqlUtil {
     /**
      * 关闭连接
      *
-     * @param connection
+     * @param connection connection
      */
     public static void closeConnection(Connection connection) {
         try {
             if (connection != null) {
                 connection.close();
-                connection = null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -123,13 +104,12 @@ public class ExecuteSqlUtil {
     /**
      * 关闭执行方法
      *
-     * @param statement
+     * @param statement statement
      */
     public static void closeStatement(Statement statement) {
         try {
             if (statement != null) {
                 statement.close();
-                statement = null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -139,18 +119,16 @@ public class ExecuteSqlUtil {
     /**
      * 关闭结果集
      *
-     * @param resultSet
+     * @param resultSet resultSet
      */
     public static void closeResultSet(ResultSet resultSet) {
         try {
             if (resultSet != null) {
                 resultSet.close();
-                resultSet = null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
 

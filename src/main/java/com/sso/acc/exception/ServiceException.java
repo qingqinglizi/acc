@@ -1,9 +1,9 @@
 package com.sso.acc.exception;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/5 10:11
- * @Description:
+ * @author Lee
+ * Date: 2020/6/5 10:11
+ * Description: service exception
  */
 public class ServiceException extends RuntimeException {
 

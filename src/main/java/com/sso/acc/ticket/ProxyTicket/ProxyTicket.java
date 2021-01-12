@@ -10,9 +10,9 @@ import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/3 10:19
- * @Description:代理票据
+ * @author Lee
+ * Date: 2020/6/3 10:19
+ * Description: 代理票据
  */
 @Component
 public class ProxyTicket {
@@ -30,10 +30,11 @@ public class ProxyTicket {
         proxyTicket = this;
     }
 
-        /**
-         * create first ticket
-         * @return
-         */
+    /**
+     * create first ticket
+     *
+     * @return first ticket
+     */
     public String createFirstTicket() {
         try {
             InetAddress inetAddress = InetAddress.getLocalHost();
@@ -41,8 +42,7 @@ public class ProxyTicket {
             long dateString = System.currentTimeMillis();
             String openText = hostIp.replace(".", "") + dateString;
             String salt = RandomStringUtils.randomAlphanumeric(5);
-            String firstTicket = "FT-" + encryptMessage(openText, salt);
-            return firstTicket;
+            return "FT-" + encryptMessage(openText, salt);
         } catch (Exception e) {
             throw new ServiceException(e.getMessage(), e);
         }
@@ -50,11 +50,12 @@ public class ProxyTicket {
 
     /**
      * encrypt important message
-     * @param openText
-     * @param salt
-     * @return
+     *
+     * @param openText openText
+     * @param salt salt
+     * @return encrypt result
      */
-    public String encryptMessage(String openText, String salt) {
+    private String encryptMessage(String openText, String salt) {
         SimpleHash encryptText = new SimpleHash(proxyTicket.ticketProperties.getAlgorithmMethod(), openText, salt, proxyTicket.ticketProperties.getIteration());
         return encryptText.toString();
     }

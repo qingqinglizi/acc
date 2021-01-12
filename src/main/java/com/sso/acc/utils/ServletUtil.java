@@ -5,13 +5,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/5 17:45
- * @Description:
+ * @author Lee
+ * Date: 2020/6/5 17:45
+ * Description: servlet util
  */
 public class ServletUtil {
 
-    public static ServletRequestAttributes getRequestAttributes() {
+    private static ServletRequestAttributes getRequestAttributes() {
         return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     }
 

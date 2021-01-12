@@ -3,16 +3,14 @@ package com.sso.acc.ticket.validateTicket;
 import com.sso.acc.ticket.TicketProperties;
 import com.sso.acc.ticket.manageTicket.ManageTicket;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/18 10:16
- * @Description:
+ * @author Lee
+ * Date: 2020/6/18 10:16
+ * Description: validate first ticket
  */
 @Component
 public class ValidateFirstTicket {
@@ -29,9 +27,7 @@ public class ValidateFirstTicket {
         validateFirstTicket = this;
     }
 
-    private ValidateFirstTicket() {
-
-    }
+    private ValidateFirstTicket() {}
 
     public static ValidateFirstTicket getInstance() {
         if (validateFirstTicket == null) {
@@ -41,10 +37,7 @@ public class ValidateFirstTicket {
     }
 
     public boolean validateFirstTicket(String firstTicket) {
-        if (firstTicket == null) {
-            return false;
-        }
-        if (!ManageTicket.firstTicketMap.containsKey(firstTicket)) {
+        if (firstTicket == null || !ManageTicket.firstTicketMap.containsKey(firstTicket)) {
             return false;
         }
         Map sessionInfo = (Map) ManageTicket.firstTicketMap.get(firstTicket);

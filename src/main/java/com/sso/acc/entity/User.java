@@ -3,9 +3,9 @@ package com.sso.acc.entity;
 import lombok.Data;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/2 11:49
- * @Description:
+ * @author Lee
+ * Date: 2020/6/2 11:49
+ * Description: user attributes
  */
 @Data
 public class User {

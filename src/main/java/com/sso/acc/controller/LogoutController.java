@@ -3,15 +3,14 @@ package com.sso.acc.controller;
 import com.sso.acc.ticket.manageTicket.ManageTicket;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/22 11:39
- * @Description:
+ * @author Lee
+ * Date: 2020/6/22 11:39
+ * Description: request for logout
  */
 @Controller
 public class LogoutController {
@@ -29,17 +28,13 @@ public class LogoutController {
             cookieName = cookie.getName();
             cookieValue = cookie.getValue();
             cookiePath = cookie.getPath();
-            if ("FT".equals(cookieName)) {
-                if (ManageTicket.firstTicketMap.containsKey(cookieValue)) {
-                    ManageTicket.firstTicketMap.remove(cookieValue);
-                    removeCookie(cookieName, cookiePath, response);
-                }
+            if ("FT".equals(cookieName) && ManageTicket.firstTicketMap.containsKey(cookieValue)) {
+                ManageTicket.firstTicketMap.remove(cookieValue);
+                removeCookie(cookieName, cookiePath, response);
             }
-            if ("ST".equals(cookieName)) {
-                if (ManageTicket.secondTicketMap.containsKey(cookieValue)) {
-                    ManageTicket.secondTicketMap.remove(cookieValue);
-                    removeCookie(cookieName, cookiePath, response);
-                }
+            if ("ST".equals(cookieName) && ManageTicket.secondTicketMap.containsKey(cookieValue)) {
+                ManageTicket.secondTicketMap.remove(cookieValue);
+                removeCookie(cookieName, cookiePath, response);
             }
         }
         return "logout";
@@ -48,11 +43,11 @@ public class LogoutController {
     /**
      * remove cookie
      *
-     * @param cookieName
-     * @param cookiePath
-     * @param response
+     * @param cookieName cookieName
+     * @param cookiePath cookiePath
+     * @param response response
      */
-    public void removeCookie(String cookieName, String cookiePath, HttpServletResponse response) {
+    private void removeCookie(String cookieName, String cookiePath, HttpServletResponse response) {
         Cookie cookie = new Cookie(cookieName, null);
         cookie.setPath(cookiePath);
         cookie.setMaxAge(0);

@@ -12,9 +12,9 @@ import java.net.InetAddress;
 import java.util.Map;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/3 11:12
- * @Description:发布票据
+ * @author Lee
+ * Date: 2020/6/3 11:12
+ * Description: 发布票据
  */
 @Component
 public class IssueTicket {
@@ -23,6 +23,8 @@ public class IssueTicket {
     private TicketProperties ticketProperties;
     //为 public 不然没有权限
     public static IssueTicket issueTicket;
+
+    private final int randomArrayLnegth = 4;
 
     //被@PostConstruct修饰的方法会在服务器加载Servlet的时候运行，并且只会被服务器调用一次，类似于Serclet的inti()方法。
     // 被@PostConstruct修饰的方法会在构造函数之后，init()方法之前运行。
@@ -33,61 +35,51 @@ public class IssueTicket {
 
     /**
      * Generate secondary ticket
-     * @param firstTicket
-     * @return
+     *
+     * @param firstTicket firstTicket
+     * @return String
      */
     public String createSecondTicket(String firstTicket) {
         try {
-            String secondTicket = null;
             //check firstTicket validity
-            if (validateFirstTicket(firstTicket)) {
-                return generateSecondaryTicket(firstTicket);
-            }
-            return secondTicket;
+            return validateFirstTicket(firstTicket) ? generateSecondaryTicket(firstTicket) : null;
         } catch (Exception e) {
-          throw new ServiceException(e.getMessage(), e);
+            throw new ServiceException(e.getMessage(), e);
         }
     }
 
     /**
      * Check the validity of the bill
-     * @param firstTicket
-     * @return
+     * @param firstTicket firstTicket
+     * @return validate result
      */
-    public boolean validateFirstTicket(String firstTicket) {
-        if (firstTicket == null) {
+    private boolean validateFirstTicket(String firstTicket) {
+        if (firstTicket == null || !ManageTicket.firstTicketMap.containsKey(firstTicket)) {
             return false;
         }
-//        HttpSession session = ServletUtil.getRequest().getSession();
-//        Object firstTicketInfo = session.getAttribute(firstTicket);
-//        if (firstTicketInfo == null) {
-//            return false;
-//        }
-        if (ManageTicket.firstTicketMap.containsKey(firstTicket)) {
-            Map firstTicketSessionInfo = (Map) ManageTicket.firstTicketMap.get(firstTicket);
-            long firstTicketTimeMillis = (long) firstTicketSessionInfo.get("loginDate");
-            long timeInterval = System.currentTimeMillis() - firstTicketTimeMillis;
-            if (timeInterval > issueTicket.ticketProperties.getExpiredTimeFT() * 1000) {
-                ManageTicket.firstTicketMap.remove(firstTicket);
-                return false;
-            }
-            ManageTicket.sessionInfo.put("loginDate", System.currentTimeMillis());
-            ManageTicket.sessionInfo.put("loginId", firstTicketSessionInfo.get("loginId"));
-            ManageTicket.firstTicketMap.put(firstTicket, ManageTicket.sessionInfo);
-            return true;
+        Map firstTicketSessionInfo = (Map) ManageTicket.firstTicketMap.get(firstTicket);
+        long firstTicketTimeMillis = (long) firstTicketSessionInfo.get("loginDate");
+        long timeInterval = System.currentTimeMillis() - firstTicketTimeMillis;
+        if (timeInterval > issueTicket.ticketProperties.getExpiredTimeFT() * 1000) {
+            ManageTicket.firstTicketMap.remove(firstTicket);
+            return false;
         }
-        return false;
+        ManageTicket.sessionInfo.put("loginDate", System.currentTimeMillis());
+        ManageTicket.sessionInfo.put("loginId", firstTicketSessionInfo.get("loginId"));
+        ManageTicket.firstTicketMap.put(firstTicket, ManageTicket.sessionInfo);
+        return true;
     }
 
     /**
      * create secondary ticket by first ticket, ip, dateTime and salt etc.
-     * @param firstTicket
-     * @return
+     *
+     * @param firstTicket firstTicket
+     * @return String
      */
-    public String generateSecondaryTicket(String firstTicket) {
+    private String generateSecondaryTicket(String firstTicket) {
         try {
             String usableElement = firstTicket.substring(3);
-            char[] randomChar = getRandomCharacter(usableElement, 4);
+            char[] randomChar = getRandomCharacter(usableElement);
             InetAddress inetAddress = InetAddress.getLocalHost();
             String hostIp = inetAddress.getHostAddress();
             long dateString = System.currentTimeMillis();
@@ -100,17 +92,14 @@ public class IssueTicket {
         }
     }
 
-    public char[] getRandomCharacter(String string, int arrayLength) {
-        if (string == null || arrayLength <= 0) {
+    private char[] getRandomCharacter(String string) {
+        if (string == null) {
             return null;
         }
-        if (arrayLength > string.length()) {
-            arrayLength = string.length();
-        }
-        char[] randomCharacter = new char[arrayLength];
+        char[] randomCharacter = new char[randomArrayLnegth];
         int index;
-        for (int i = 0; i < arrayLength; i ++) {
-            index = (int)(Math.random() * arrayLength);
+        for (int i = 0; i < randomArrayLnegth; i++) {
+            index = (int) (Math.random() * randomArrayLnegth);
             randomCharacter[i] = string.charAt(index);
         }
         return randomCharacter;

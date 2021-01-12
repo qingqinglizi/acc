@@ -10,9 +10,9 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/2 14:07
- * @Description:
+ * @author Lee
+ * Date: 2020/6/2 14:07
+ * Description: create ticket
  */
 @Controller
 @RequestMapping("/createTicket")
@@ -27,13 +27,12 @@ public class CreateTicketController {
     }
 
     @RequestMapping("/getFirstTicket")
-    public String getFirstTicket(String loginId, HttpServletRequest request, HttpServletResponse response) {
+    public String getFirstTicket(String loginId, HttpServletResponse response) {
         ProxyTicket proxyTicket = new ProxyTicket();
         String firstTicket = proxyTicket.createFirstTicket();
         ManageTicket.sessionInfo.put("loginDate", System.currentTimeMillis());
         ManageTicket.sessionInfo.put("loginId", loginId);
         ManageTicket.firstTicketMap.put(firstTicket, ManageTicket.sessionInfo);
-//        request.getSession().setAttribute(firstTicket, ManageTicket.sessionInfo);
         Cookie cookie = new Cookie("FT", firstTicket);
         response.addCookie(cookie);
         return firstTicket;
@@ -71,5 +70,4 @@ public class CreateTicketController {
         response.addCookie(cookie);
         response.sendRedirect(service);
     }
-
 }

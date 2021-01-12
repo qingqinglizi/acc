@@ -1,19 +1,16 @@
 package com.sso.acc.ticket.validateTicket;
 
 import com.sso.acc.ticket.TicketProperties;
-import com.sso.acc.ticket.issueTicket.IssueTicket;
 import com.sso.acc.ticket.manageTicket.ManageTicket;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
- * @Auther: Lee
- * @Date 2020/6/18 10:17
- * @Description:
+ * @author Lee
+ * Date: 2020/6/18 10:17
+ * Description: validate second ticket
  */
 @Component
 public class ValidateSecondTicket {
@@ -30,23 +27,15 @@ public class ValidateSecondTicket {
         validateSecondTicket = this;
     }
 
-    private ValidateSecondTicket() {
-
-    }
+    private ValidateSecondTicket() {}
 
     public static ValidateSecondTicket getInstance() {
-        if (validateSecondTicket == null) {
-            validateSecondTicket = new ValidateSecondTicket();
-        }
-        return validateSecondTicket;
+        return validateSecondTicket == null ? new ValidateSecondTicket() : validateSecondTicket;
     }
 
     public boolean validateSecondTicket(String secondTicket) {
-        if (secondTicket == null) {
-            return false;
-        }
-        if (!ManageTicket.secondTicketMap.containsKey(secondTicket)) {
-            //invalid ST
+        //invalid ST
+        if (secondTicket == null || !ManageTicket.secondTicketMap.containsKey(secondTicket)) {
             return false;
         }
         Map sessionInfo = (Map) ManageTicket.secondTicketMap.get(secondTicket);
