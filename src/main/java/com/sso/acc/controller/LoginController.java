@@ -1,14 +1,12 @@
 package com.sso.acc.controller;
 
 import com.sso.acc.ticket.issueTicket.IssueTicket;
-import com.sso.acc.ticket.manageTicket.ManageTicket;
 import com.sso.acc.ticket.validateTicket.ValidateFirstTicket;
 import com.sso.acc.ticket.validateTicket.ValidateSecondTicket;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +26,7 @@ public class LoginController {
     @RequestMapping("/login")
     public String getLoginView(@RequestParam(required = false) String service, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Cookie[] cookies = request.getCookies();
-        if (service == null || cookies == null) {
+        if (cookies == null) {
             return "loginView";
         }
         boolean existST = false;
@@ -56,21 +54,24 @@ public class LoginController {
         }
         if (existFT) {
             //validate FT
-            if (ValidateFirstTicket.getInstance().validateFirstTicket(firstCookieComment)) {
-                IssueTicket issueTicket = new IssueTicket();
-                String secondTicket = issueTicket.createSecondTicket(firstCookieComment);
-                if (secondTicket == null) {
-                    //remove FT
-                    removeCookie("FT", rootPath, response);
-                    response.sendRedirect("/login?service=" + service);
-                    return null;
-                }
-                Cookie cookie = new Cookie("ST", secondTicket);
-                cookie.setPath("/");
-                response.addCookie(cookie);
-                response.sendRedirect(service);
+            if (!ValidateFirstTicket.getInstance().validateFirstTicket(firstCookieComment)) {
+                return "loginView";
+            }
+            IssueTicket issueTicket = new IssueTicket();
+            String secondTicket = issueTicket.createSecondTicket(firstCookieComment);
+            String redirectPath = service;
+            if (secondTicket == null) {
+                //remove FT
+                removeCookie("FT", rootPath, response);
+                redirectPath = redirectPath == null ? "/login" : "/login?service=" + service;
+                response.sendRedirect(redirectPath);
                 return null;
             }
+            Cookie cookie = new Cookie("ST", secondTicket);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            response.sendRedirect(redirectPath == null ? "success" : redirectPath);
+            return null;
         }
         return "loginView";
     }
