@@ -23,6 +23,11 @@ public class LoginController {
     @Value("${server.servlet.context-path}")
     private String rootPath;
 
+    @RequestMapping("/")
+    public String welcome() {
+        return "index";
+    }
+
     @RequestMapping("/login")
     public String getLoginView(@RequestParam(required = false) String service, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Cookie[] cookies = request.getCookies();
